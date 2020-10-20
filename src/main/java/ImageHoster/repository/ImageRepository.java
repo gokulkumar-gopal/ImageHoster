@@ -60,6 +60,18 @@ public class ImageRepository {
         }
     }
 
+    public Image getImageByTitleAndId(String title, Integer id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<Image> typedQuery = em.createQuery("SELECT i from Image i where i.title =:title AND i.id = :id", Image.class);
+            typedQuery.setParameter("title", title);
+            typedQuery.setParameter("id", id);
+            return typedQuery.getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
     //The method creates an instance of EntityManager
     //Executes JPQL query to fetch the image from the database with corresponding id
     //Returns the image fetched from the database
