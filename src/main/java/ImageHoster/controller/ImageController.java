@@ -105,8 +105,6 @@ public class ImageController {
         Image image = imageService.getImage(imageId);
         User loggedUser = (User)session.getAttribute("loggeduser");
 
-        System.out.println(session.getAttribute("loggeduser") + " " + image.getUser().getUsername());
-
         if(loggedUser.getUsername().equals(image.getUser().getUsername())) {
             String tags = convertTagsToString(image.getTags());
             model.addAttribute("image", image);
