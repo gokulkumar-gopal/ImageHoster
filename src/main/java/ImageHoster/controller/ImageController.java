@@ -5,6 +5,7 @@ import ImageHoster.model.Tag;
 import ImageHoster.model.User;
 import ImageHoster.service.ImageService;
 import ImageHoster.service.TagService;
+import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -155,9 +156,16 @@ public class ImageController {
     //The method calls the deleteImage() method in the business logic passing the id of the image to be deleted
     //Looks for a controller method with request mapping of type '/images'
     @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
-    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId) {
-        imageService.deleteImage(imageId);
-        return "redirect:/images";
+    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId, Model model, HttpSession session) {
+        User loggedUser = (User)session.getAttribute("loggeduser");
+        Image image = imageService.getImage(imageId);
+        if(loggedUser.getUsername().equals(image.getUser().getUsername())) {
+            imageService.deleteImage(imageId);
+            return "redirect:/images";
+        } else {
+            model.addAttribute("deleteError", "Only the owner of the image can delete the image");
+            return "forward:/images/" + image.getId() + "/" + image.getTitle();
+        }
     }
 
 
