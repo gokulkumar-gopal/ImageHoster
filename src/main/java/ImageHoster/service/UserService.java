@@ -31,14 +31,4 @@ public class UserService {
             return null;
         }
     }
-
-    //This method returns true is password strength is matched. Atleast one capital letter, one small letter
-    //one number and one special character. Return false if this criteria is not met.
-    public boolean checkPasswordStrength(String password) {
-        String str = password.replaceAll("[a-zA-Z0-9]","");
-        if(str.length() > 0) {
-                return true;
-            }
-        return false;
-    }
 }

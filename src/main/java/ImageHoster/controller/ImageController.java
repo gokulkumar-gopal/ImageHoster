@@ -4,7 +4,6 @@ import ImageHoster.model.Comment;
 import ImageHoster.model.Image;
 import ImageHoster.model.Tag;
 import ImageHoster.model.User;
-import ImageHoster.service.CommentService;
 import ImageHoster.service.ImageService;
 import ImageHoster.service.TagService;
 import org.apache.tomcat.util.http.parser.HttpParser;
@@ -29,9 +28,6 @@ public class ImageController {
 
     @Autowired
     private TagService tagService;
-
-    @Autowired
-    private CommentService commentService;
 
     //This method displays all the images in the user home page after successful login
     @RequestMapping("images")
@@ -66,7 +62,7 @@ public class ImageController {
         if(image == null) {
             image = new Image();
         }
-        List<Comment> comments = commentService.getAllComments(id);
+        List<Comment> comments = imageService.getAllComments(id);
         model.addAttribute("image", image);
         model.addAttribute("comments", comments);
         model.addAttribute("tags", image.getTags());
@@ -83,7 +79,7 @@ public class ImageController {
         comment.setUser(loggedUser);
         comment.setText(inputComment);
         comment.setCreatedDate(new Date());
-        commentService.createComment(comment);
+        imageService.createComment(comment);
         return "redirect:/images/" + image.getId() + "/" + image.getTitle();
     }
 

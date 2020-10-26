@@ -44,7 +44,8 @@ public class UserController {
     //This method calls the business logic and after the user record is persisted in the database, directs to login page
     @RequestMapping(value = "users/registration", method = RequestMethod.POST)
     public String registerUser(User user, Model model) {
-        if(!userService.checkPasswordStrength(user.getPassword())) {
+        boolean strongPassword = checkPasswordStrength(user.getPassword());
+        if(!strongPassword) {
             User newUser = new User();
             UserProfile profile = new UserProfile();
             newUser.setProfile(profile);
@@ -90,5 +91,15 @@ public class UserController {
         List<Image> images = imageService.getAllImages();
         model.addAttribute("images", images);
         return "index";
+    }
+
+    //This method returns true is password strength is matched. Atleast one capital letter, one small letter
+    //one number and one special character. Return false if this criteria is not met.
+    public boolean checkPasswordStrength(String password) {
+        String str = password.replaceAll("[a-zA-Z0-9]","");
+        if(str.length() > 0) {
+            return true;
+        }
+        return false;
     }
 }

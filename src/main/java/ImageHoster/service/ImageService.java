@@ -51,4 +51,14 @@ public class ImageService {
     public void deleteImage(Integer imageId) {
         imageRepository.deleteImage(imageId);
     }
+
+    //calls the create Comment method in repository
+    public void createComment(Comment comment) {
+        imageRepository.createComment(comment);
+    }
+
+    //get all comments for a given image
+    public List<Comment> getAllComments(Integer imageId) {
+        return imageRepository.getAllComments(imageId);
+    }
 }
