@@ -4,10 +4,12 @@ import ImageHoster.model.Image;
 import ImageHoster.model.Tag;
 import ImageHoster.model.User;
 import ImageHoster.model.UserProfile;
+import ImageHoster.service.CommentService;
 import ImageHoster.service.ImageService;
 import ImageHoster.service.TagService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,6 +40,9 @@ public class ImageControllerTest {
 
     @MockBean
     private TagService tagService;
+
+    @MockBean
+    private CommentService commentService;
 
     //This test checks the controller logic to get all the images after the user is logged in the application and checks whether the logic returns the html file 'images.html'
     @Test
@@ -90,7 +95,6 @@ public class ImageControllerTest {
         this.mockMvc.perform(get("/images/1/new").session(session))
                 .andExpect(view().name("images/image"))
                 .andExpect(content().string(containsString("Welcome User. This is the image")));
-
     }
 
 
