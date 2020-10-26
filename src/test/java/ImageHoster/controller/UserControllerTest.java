@@ -80,7 +80,6 @@ public class UserControllerTest {
         user.setUsername("Abhi");
         user.setPassword("password1@");
 
-
         this.mockMvc.perform(post("/users/registration")
                 .flashAttr("user", user)
         )

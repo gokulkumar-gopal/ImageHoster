@@ -10,8 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -41,13 +43,17 @@ public class UserController {
     //This controller method is called when the request pattern is of type 'users/registration' and also the incoming request is of POST type
     //This method calls the business logic and after the user record is persisted in the database, directs to login page
     @RequestMapping(value = "users/registration", method = RequestMethod.POST)
-    public String registerUser(User user, RedirectAttributes redirectAttributes) {
-        if(userService.checkPasswordStrength(user.getPassword())) {
+    public String registerUser(User user, Model model) {
+        if(!userService.checkPasswordStrength(user.getPassword())) {
+            User newUser = new User();
+            UserProfile profile = new UserProfile();
+            newUser.setProfile(profile);
+            model.addAttribute("User", newUser);
+            model.addAttribute("passwordTypeError", "Password must contain atleast 1 alphabet, 1 number & 1 special character");
+            return "users/registration";
+        } else {
             userService.registerUser(user);
             return "users/login";
-        } else {
-            redirectAttributes.addFlashAttribute("passwordTypeError", "Password must contain atleast 1 alphabet, 1 number & 1 special character");
-            return "redirect:/users/registration";
         }
     }
 

@@ -63,10 +63,13 @@ public class ImageController {
     @RequestMapping("/images/{id}/{title}")
     public String showImage(@PathVariable("title") String title, @PathVariable("id") Integer id, Model model) {
         Image image = imageService.getImageByTitleAndId(title, id);
+        if(image == null) {
+            image = new Image();
+        }
         List<Comment> comments = commentService.getAllComments(id);
         model.addAttribute("image", image);
-        model.addAttribute("tags", image.getTags());
         model.addAttribute("comments", comments);
+        model.addAttribute("tags", image.getTags());
         return "images/image";
     }
 
