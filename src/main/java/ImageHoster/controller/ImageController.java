@@ -1,8 +1,10 @@
 package ImageHoster.controller;
 
+import ImageHoster.model.Comment;
 import ImageHoster.model.Image;
 import ImageHoster.model.Tag;
 import ImageHoster.model.User;
+import ImageHoster.service.CommentService;
 import ImageHoster.service.ImageService;
 import ImageHoster.service.TagService;
 import org.apache.tomcat.util.http.parser.HttpParser;
@@ -27,6 +29,9 @@ public class ImageController {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private CommentService commentService;
 
     //This method displays all the images in the user home page after successful login
     @RequestMapping("images")
@@ -58,9 +63,25 @@ public class ImageController {
     @RequestMapping("/images/{id}/{title}")
     public String showImage(@PathVariable("title") String title, @PathVariable("id") Integer id, Model model) {
         Image image = imageService.getImageByTitleAndId(title, id);
+        List<Comment> comments = commentService.getAllComments(id);
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
+        model.addAttribute("comments", comments);
         return "images/image";
+    }
+
+    //This method creates a new comment for a given image id/title
+    @RequestMapping(value = "/image/{id}/{title}/comments", method = RequestMethod.POST)
+    public String createComment(@PathVariable("title") String title, @PathVariable("id") Integer id, @RequestParam("comment") String inputComment, HttpSession session) {
+        Image image = imageService.getImageByTitleAndId(title, id);
+        User loggedUser = (User)session.getAttribute("loggeduser");
+        Comment comment = new Comment();
+        comment.setImage(image);
+        comment.setUser(loggedUser);
+        comment.setText(inputComment);
+        comment.setCreatedDate(new Date());
+        commentService.createComment(comment);
+        return "redirect:/images/" + image.getId() + "/" + image.getTitle();
     }
 
     //This controller method is called when the request pattern is of type 'images/upload'
@@ -178,7 +199,7 @@ public class ImageController {
     //After adding all tags to a list, the list is returned
     private List<Tag> findOrCreateTags(String tagNames) {
         StringTokenizer st = new StringTokenizer(tagNames, ",");
-        List<Tag> tags = new ArrayList<Tag>();
+        List<Tag> tags = new ArrayList<>();
 
         while (st.hasMoreTokens()) {
             String tagName = st.nextToken().trim();

@@ -44,7 +44,7 @@ public class UserController {
     public String registerUser(User user, RedirectAttributes redirectAttributes) {
         if(userService.checkPasswordStrength(user.getPassword())) {
             userService.registerUser(user);
-            return "redirect:/users/login";
+            return "users/login";
         } else {
             redirectAttributes.addFlashAttribute("passwordTypeError", "Password must contain atleast 1 alphabet, 1 number & 1 special character");
             return "redirect:/users/registration";
